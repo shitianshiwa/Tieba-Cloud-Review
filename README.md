@@ -40,6 +40,7 @@ sudo pip3 install pyzbar
         + **pillow** 图像库
         + **zbar-devel** 二维码检测的底层支持代码
         + **pyzbar** 它是zbar的一个Python封装
+        
 ## 自定义设置
 脚本接受**命令行参数**，并通过**user_control文件夹里的json**来控制其行为
 
@@ -73,8 +74,10 @@ sudo pip3 install pyzbar
 + headers.txt
     + 保存有cookies的头文件
     + 建议随便点开一个吧，按<kbd>F12</kbd>，在**Network**里将消息头直接复制到该txt中
+    
 ## 自定义审查行为
 请参照我给出的例子自己编程修改**cloud_review.py**，Python的功能真的非常强大
+
 ## 设置定时任务
 给出我的crontab设置作为示例
 ```
@@ -86,6 +89,8 @@ MAILTO=""
 */6 6-23,0 * * * . /etc/profile; python /(屏蔽)/cloud_review.py
 */20 1-5 * * * . /etc/profile; python /(屏蔽)/cloud_review.py
 ```
+
 ## 结束
 至此，所有的配置工作已经完成
+
 Enjoy:)
