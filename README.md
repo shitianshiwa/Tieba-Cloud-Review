@@ -40,9 +40,13 @@ sudo pip3 install pyzbar
         + **pyzbar** 它是zbar的一个Python封装
 ## 自定义设置
 脚本接受**命令行参数**，并通过**user_control文件夹里的json**来控制其行为
+
 **命令行参数**都有默认值，所以一般不需要你特意设置
+
 例如**example.py**对应的控制json就是**example.json**
+
 下面说明这些json里各项值的意义
+
 + block_cycle.json
     + **admin_type** 吧务账号支持的最高封禁天数
     + **block_list** 需要封禁的用户列表
