@@ -25,6 +25,6 @@ sudo pip3 install pillow
 sudo yum install zbar-devel
 sudo pip install pyzbar
 ```
-如果**zbar-devel**安装失败，你可能需要安装一个第三方yum源
-Raven源 <https://centos.pkgs.org/8/raven-x86_64/raven-release-1.0-1.el8.noarch.rpm.html>
-使用```rpm -Uvh xxx.rpm```来安装Raven源
+    + 如果**zbar-devel**安装失败，你可能需要安装一个第三方yum源
+    + Raven源 <https://centos.pkgs.org/8/raven-x86_64/raven-release-1.0-1.el8.noarch.rpm.html>
+    + 使用```rpm -Uvh xxx.rpm```来安装Raven源
