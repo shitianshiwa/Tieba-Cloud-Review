@@ -90,7 +90,7 @@ sudo pip3 install pyzbar
     
 + headers.txt
 
-    + 保存有cookies的头文件
+    + 保存有cookies信息的头文件
     + 建议随便点开一个吧，按<kbd>F12</kbd>，在**Network**里将消息头直接复制到该txt中
     
 ## 自定义审查行为
@@ -111,4 +111,4 @@ MAILTO=""
 ## 结束
 至此，所有的配置工作已经完成
 
-Enjoy :)
+**Enjoy :)**
