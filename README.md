@@ -12,13 +12,20 @@
 - 需要大量依赖项，脚本部署困难
 
 ## 环境部署
+
 部署过程由难到易，如果第一步你就做不下去建议放弃使用该脚本
+
 + 下载压缩包并在任一目录里解包，目录示例: **/root/scripts/tieba**
+
 + 配置MySQL
+
     + 使用该脚本，你需要一个数据库用来缓存通过检测的带图回复的**pid**，以节约图像检测的耗时
+    
     + 打开: **/browser/cloud_review.py**
+    
         - 修改开头的**DB_NAME**可指定数据库名
         - 修改字典**mysql_login**来连接到你的MySQL数据库
+        
 + pip安装需要的Python库
 ```
 sudo pip3 install mysql-connector
@@ -29,11 +36,15 @@ sudo yum install zbar-devel
 sudo pip3 install pyzbar
 ```
 + 附加说明
+
     + 如果**zbar-devel**安装失败
+    
         + 你可能需要安装一个第三方yum源
         + Raven源 <https://centos.pkgs.org/8/raven-x86_64/raven-release-1.0-1.el8.noarch.rpm.html>
         + 使用```rpm -Uvh xxx.rpm```来安装Raven源
+        
     + 各第三方库的用途说明
+    
         + **mysql-connector** 连接MySQL
         + **lxml** 用于BeautifulSoup解析
         + **bs4** BeautifulSoup解析HTML
@@ -51,20 +62,26 @@ sudo pip3 install pyzbar
 下面说明这些json里各项值的意义
 
 + block_cycle.json
+
     + **admin_type** 吧务账号支持的最高封禁天数
+    
     + **block_list** 需要封禁的用户列表
+    
         + **tb_name** 封禁将发生在哪个吧
         + **user_name** 被封禁人的用户名
         + **nick_name** 被封禁人的昵称（可选参数）
         + **day** 封禁天数
         + **portrait** 被封禁人的头像portrait值（可选参数）
         + **reason** 封禁理由（可选参数）
+        
     + 这里要特别说明的是
+    
         + 部分用户没有用户名，这些人只能通过新版api封禁，且小吧无法越权封禁（例如封十天）
         + 但对于有用户名的用户，小吧可以通过旧版api越权封禁
         + 新版api封禁用户必须提交portrait，虽然系统可以自动获取portrait，但如果你把这个字段自己填上可以加快运行速度
         
 + cloud_review.json
+
     + **admin_type** 吧务账号支持的最高封禁天数
     + **tieba_name** 开启云审查的贴吧名
     + **sleep_time** 每两次循环审查的间隔时间
@@ -72,6 +89,7 @@ sudo pip3 install pyzbar
     + **quit_flag** 是否在本次审查结束后退出，你可以随时修改该项来实现脚本的安全结束（退出时脚本会更新fid缓存、将仍未提交的语句提交到数据库）
     
 + headers.txt
+
     + 保存有cookies的头文件
     + 建议随便点开一个吧，按<kbd>F12</kbd>，在**Network**里将消息头直接复制到该txt中
     
