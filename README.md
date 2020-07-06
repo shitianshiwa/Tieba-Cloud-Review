@@ -1,5 +1,5 @@
 # Tieba-Cloud-Review
-部署于Linux服务器的百度贴吧云审查&循环封禁Python脚本
+部署于Linux系统的百度贴吧云审查&循环封禁Python脚本
 ## 功能特点
 ### 优点
 + 基于网页版贴吧和部分客户端版本的api，支持小吧封十天
@@ -94,7 +94,7 @@ sudo pip3 install pyzbar
     + 建议随便点开一个吧，按<kbd>F12</kbd>，在**Network**里将消息头直接复制到该txt中
     
 ## 自定义审查行为
-请参照我给出的例子自己编程修改**cloud_review.py**，Python的功能真的非常强大
+请参照我给出的例子自己编程修改**cloud_review.py**，注释比较规范全面，请自行理解各api的功能
 
 ## 设置定时任务
 给出我的crontab设置作为示例
@@ -102,8 +102,8 @@ sudo pip3 install pyzbar
 SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=""
-25 0 * * * . /etc/profile; python /(屏蔽)/block_cycle.py -bc /home/starry/Scripts/tieba/user_control/block_cycle_1.json
-0 0 */3 * * . /etc/profile; python /(屏蔽)/block_cycle.py -bc /home/starry/Scripts/tieba/user_control/block_cycle_10.json
+25 0 * * * . /etc/profile; python /(屏蔽)/block_cycle.py -bc /(屏蔽)/block_cycle_1.json
+0 0 */3 * * . /etc/profile; python /(屏蔽)/block_cycle.py -bc /(屏蔽)/user_control/block_cycle_10.json
 */6 6-23,0 * * * . /etc/profile; python /(屏蔽)/cloud_review.py
 */20 1-5 * * * . /etc/profile; python /(屏蔽)/cloud_review.py
 ```
