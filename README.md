@@ -13,7 +13,7 @@
 + 下载压缩包并在任一目录里解包，目录示例：**/root/scripts/tieba**
 + 配置MySQL
     + 使用该脚本，你需要一个数据库用来缓存通过检测的带图回复的**pid**，以节约图像检测的耗时
-    + 打开**./browser/_browser.py**
+    + 打开**./browser/cloud_review.py**
         - 修改开头的**DB_NAME**可指定数据库名
         - 修改字典**mysql_login**来连接到你的MySQL数据库
 + pip安装需要的Python库
@@ -25,6 +25,14 @@ sudo pip3 install pillow
 sudo yum install zbar-devel
 sudo pip install pyzbar
 ```
-    + 如果**zbar-devel**安装失败，你可能需要安装一个第三方yum源
++ 如果**zbar-devel**安装失败
+    + 你可能需要安装一个第三方yum源
     + Raven源 <https://centos.pkgs.org/8/raven-x86_64/raven-release-1.0-1.el8.noarch.rpm.html>
     + 使用```rpm -Uvh xxx.rpm```来安装Raven源
++ 各第三方库的用途说明
+    + **mysql-connector**连接MySQL
+    + **lxml**用于BeautifulSoup解析
+    + **bs4**BeautifulSoup解析HTML
+    + **pillow**图像库
+    + **zbar-devel**二维码检测的底层支持代码
+    + **pyzbar**它是zbar的一个Python封装
