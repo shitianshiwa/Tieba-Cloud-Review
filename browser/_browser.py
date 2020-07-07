@@ -38,7 +38,13 @@ class _Thread():
     reply_num:回复数
     """
 
-    __slots__ = ('tid','pid','topic','user_name','nick_name','portrait','reply_num')
+    __slots__ = ('tid',
+                 'pid',
+                 'topic',
+                 'user_name',
+                 'nick_name',
+                 'portrait',
+                 'reply_num')
 
     def __init__(self):
         pass
@@ -62,7 +68,18 @@ class _Post():
     smileys:表情列表
     """
 
-    __slots__ = ('text','tid','pid','user_name','nick_name','portrait','level','floor','comment_num','sign','imgs','smileys')
+    __slots__ = ('text',
+                 'tid',
+                 'pid',
+                 'user_name',
+                 'nick_name',
+                 'portrait',
+                 'level',
+                 'floor',
+                 'comment_num',
+                 'sign',
+                 'imgs',
+                 'smileys')
 
     def __init__(self):
         pass
@@ -81,7 +98,13 @@ class _Comment():
     smileys:表情列表
     """
 
-    __slots__ = ('text','tid','pid','user_name','nick_name','portrait','smileys')
+    __slots__ = ('text',
+                 'tid',
+                 'pid',
+                 'user_name',
+                 'nick_name',
+                 'portrait',
+                 'smileys')
 
     def __init__(self):
         pass
@@ -201,7 +224,8 @@ class _Browser():
 
     def _get_tbs(self):
         self._set_host(self.tbs_api)
-        res = req.get(self.tbs_api, headers = self.account.headers).text
+        res = req.get(self.tbs_api,
+                      headers = self.account.headers).text
         tbs = re.search('"tbs":"([a-z\d]+)',res).group(1)
         return tbs
 
@@ -213,7 +237,9 @@ class _Browser():
             raw = None
             count = 0
             while not raw and count < 4:
-                res = req.get(self.fid_api,params={'kw':tb_name,'ie':'utf-8'}, headers = self.account.headers).text
+                res = req.get(self.fid_api,
+                              params={'kw':tb_name,'ie':'utf-8'},
+                              headers = self.account.headers).text
                 raw = re.search('"forum_id":(\d+)', res)
                 count+=1
             if raw:
@@ -236,7 +262,9 @@ class _Browser():
 
     def _get_portrait(self,name):
         self._set_host(self.user_homepage_url)
-        res = req.get(self.user_homepage_url,params={'un':name},headers=self.account.headers).text
+        res = req.get(self.user_homepage_url,
+                      params={'un':name},
+                      headers=self.account.headers).text
         portrait = re.search('data-sign="([\w\.-]+)',res).group(1)
         return portrait
 
@@ -252,7 +280,9 @@ class _Browser():
         try:
             threads = []
             self._set_host(self.tieba_url)
-            res = html.unescape(req.get(self.tieba_url,params={'kw':tb_name,'pn':pn,'ie':'utf-8'}, headers=self.account.headers).text)
+            res = html.unescape(req.get(self.tieba_url,
+                                        params={'kw':tb_name,'pn':pn,'ie':'utf-8'},
+                                        headers=self.account.headers).text)
             raws = re.findall('thread_list clearfix([\s\S]*?)创建时间"',res)
             for raw in raws:
                 thread = _Thread()
@@ -277,6 +307,7 @@ class _Browser():
         _get_post(tid,pn=0)
 
         Returns:
+            has_next: 是否还有下一页
             _Post
         """
 
@@ -285,22 +316,28 @@ class _Browser():
 
         post_list = []
         raw = None
-        retry_times = 3
-        while not raw and retry_times:
-            try:
-                raw = req.get(self.tieba_post_url + tid, params={'pn':pn}, headers=self.account.headers).text
-                raw = re.search('<div class="p_postlist" id="j_p_postlist">.*</div>',raw,re.S).group()
-            except(AttributeError):
-                raw = None
-                time.sleep(0.25)
-            finally:
+        retry_times = 6
+        while retry_times:
+            res = req.get(self.tieba_post_url + tid,
+                            params={'pn':pn},
+                            headers=self.account.headers)
+            if res.status_code == 200:
+                try:
+                    raw = re.search('<div class="p_postlist" id="j_p_postlist">.*</div>',res.text,re.S).group()
+                except(AttributeError):
+                    pass
+                else:
+                    break
+            else:
                 retry_times-=1
+                time.sleep(0.25)
 
         if raw:
+            has_next = True if re.search('<a href=".*">尾页</a>',raw) else False
             content = BeautifulSoup(raw,'lxml')
         else:
             self.log.error("Failed to get posts of {tid}".format(tid=tid))
-            return post_list
+            return False,post_list
 
         try:
             posts = content.find_all("div",{'data-field':True,'data-pid':True})
@@ -336,9 +373,9 @@ class _Browser():
 
         except KeyError:
             self.log.error("KeyError: Failed to get posts of {tid}".format(tid=tid))
-            return []
+            return False,[]
         else:
-            return post_list
+            return has_next,post_list
 
     def _get_comment(self,tid,pid,pn=1):
         """
@@ -353,8 +390,24 @@ class _Browser():
         tid = str(tid)
         pid = str(pid)
         self._set_host(self.comment_url)
-        raw = req.get(self.comment_url, params={'tid':tid,'pid':pid,'pn':pn}, headers=self.account.headers).text
-        content = BeautifulSoup(raw,'lxml')
+
+        raw = None
+        retry_times = 6
+        while retry_times:
+            res = req.get(self.comment_url,
+                          params={'tid':tid,'pid':pid,'pn':pn},
+                          headers=self.account.headers)
+            if res.status_code == 200:
+                break
+            else:
+                retry_times-=1
+                time.sleep(0.25)
+
+        if res.status_code != 200:
+            self.log.error("Failed to get comments of {pid} in thread {tid}".format(tid=tid,pid=pid))
+            return False,[]
+
+        content = BeautifulSoup(res.text,'lxml')
         comments = []
         try:
             raws = content.find_all('li',class_=re.compile('lzl_single_post'))
@@ -363,8 +416,10 @@ class _Browser():
             for comment_raw in raws:
                 comment = _Comment()
                 comment_data = json.loads(comment_raw['data-field'])
-                comment.pid = comment_data['spid']
                 comment.tid = tid
+                comment.pid = comment_data['spid']
+                comment.portrait = comment_data['portrait']
+                comment.user_name = comment_data['user_name']
                 nick_name = comment_raw.find('a',class_='at j_user_card').text
                 if nick_name == comment.user_name:
                     comment.nick_name = ''
@@ -383,7 +438,7 @@ class _Browser():
 
         except KeyError:
             log.error("KeyError: Failed to get posts of {pid} in thread {tid}".format(tid=tid,pid=pid))
-            return []
+            return False,[]
 
     def _new_del_thread(self,tb_name,tid):
         """
@@ -398,7 +453,9 @@ class _Browser():
                    'tid':tid
                    }
         self._set_host(self.new_del_thread_api)
-        res = req.post(self.new_del_thread_api, data = payload, headers = self.account.headers).content.decode('unicode_escape')
+        res = req.post(self.new_del_thread_api,
+                       data = payload,
+                       headers = self.account.headers).content.decode('unicode_escape')
         if re.search('"err_code":0',res):
             self.log.info("Delete thread {tid} in {tb_name}".format(tid=tid,tb_name=tb_name))
             return True
@@ -422,7 +479,9 @@ class _Browser():
                    'is_finf':'false'
                    }
         self._set_host(self.new_del_post_api)
-        res = req.post(self.new_del_post_api, data = payload, headers = self.account.headers).content.decode('unicode_escape')
+        res = req.post(self.new_del_post_api,
+                       data = payload,
+                       headers = self.account.headers).content.decode('unicode_escape')
         if re.search('"err_code":0',res):
             self.log.info("Delete post {pid} in {tid} in {tb_name}".format(pid=pid,tid=tid,tb_name=tb_name))
             return True

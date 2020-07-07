@@ -23,19 +23,19 @@ import pyzbar.pyzbar as pyzbar
 from .block_id import BlockID
 from ._browser import SHOTNAME
 
-DB_NAME = 'tieba_imgs'
+DB_NAME = 'tieba_imgs'  # 数据库名
 system = platform.system()
 if system == 'Linux':
     mysql_login = {
-        'host':'your_database',
-        'user':'your_username',
-        'passwd':'your_password'
-        }
+        'host':'',
+        'user':'',
+        'passwd':''
+        }  # 链接所需的用户名和密码
 else:
     mysql_login = {
-        'host':'localhost',
-        'user':'your_username',
-        'passwd':'your_password'
+        'host':'',
+        'user':'',
+        'passwd':''
         }
 
 class _CloudReview(BlockID):
@@ -62,9 +62,14 @@ class _CloudReview(BlockID):
 
         self.table_name=SHOTNAME
         try:
-            self.mydb = mysql.connector.connect(host=mysql_login['host'],user=mysql_login['user'],passwd=mysql_login['passwd'],database=DB_NAME)
+            self.mydb = mysql.connector.connect(host=mysql_login['host'],
+                                                user=mysql_login['user'],
+                                                passwd=mysql_login['passwd'],
+                                                database=DB_NAME)
         except(mysql.connector.errors.ProgrammingError):
-            self.mydb = mysql.connector.connect(host=mysql_login['host'],user=mysql_login['user'],passwd=mysql_login['passwd'])
+            self.mydb = mysql.connector.connect(host=mysql_login['host'],
+                                                user=mysql_login['user'],
+                                                passwd=mysql_login['passwd'])
             self.mycursor = self.mydb.cursor()
             self.mycursor.execute("CREATE DATABASE {database}".format(database=DB_NAME))
             self.mycursor.execute("USE {database}".format(database=DB_NAME))
