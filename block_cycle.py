@@ -11,9 +11,18 @@ import browser
 PATH = os.path.split(os.path.realpath(__file__))[0].replace('\\','/')
 
 parser = argparse.ArgumentParser(description='Block Tieba ID')
-parser.add_argument('--admin_type', '-at',type=str,default=1, help='max blocking days of the admin account')
-parser.add_argument('--block_ctrl_filepath', '-bc',type=str,default=PATH + '/user_control/' + browser.SHOTNAME + '.json', help='path of the block control json | default value for example.py is ./user_control/example.json')
-parser.add_argument('--header_filepath', '-hp',type=str,default=PATH + '/user_control/headers.txt', help='path of the headers txt | default value is ./user_control/headers.txt')
+parser.add_argument('--admin_type','-at',
+                    type=str,
+                    default=1,
+                    help='max blocking days of the admin account')
+parser.add_argument('--block_ctrl_filepath','-bc',
+                    type=str,
+                    default=PATH + '/user_control/' + browser.SHOTNAME + '.json',
+                    help='path of the block control json | default value for example.py is ./user_control/example.json')
+parser.add_argument('--header_filepath','-hp',
+                    type=str,
+                    default=PATH + '/user_control/headers.txt',
+                    help='path of the headers txt | default value is ./user_control/headers.txt')
 kwargs = vars(parser.parse_args())
 
 try:
